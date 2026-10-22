@@ -73,6 +73,24 @@ curl -X DELETE http://localhost:8080/avistamientos/1
 Resumen por especie (bonus):
 curl http://localhost:8080/avistamientos/resumen
 
+Pruebas:
+
+Correr todas las pruebas:
+mvnw.cmd test
+
+Correr una sola clase de pruebas:
+mvnw.cmd test -Dtest=ValidadorDeAvistamientoTest
+
+Generar el reporte de cobertura (JaCoCo):
+mvnw.cmd verify
+
+El reporte queda en target/site/jacoco/index.html
+
+Las pruebas están en src/test/java:
+- validacion/ValidadorDeAvistamientoTest: pruebas unitarias de la regla de negocio, con RelojFijo como stub del reloj.
+- service/AvistamientoServiceTest: pruebas unitarias del servicio, con un mock del repositorio.
+- AvistamientoApiIntegracionTest: pruebas de integración de los endpoints por HTTP, con la base H2.
+
 Uso de IA:
 
 Este proyecto fue desarrollado con asistencia de DeepSeek para explicar conceptos y resolver errores. El código fue comprendido, probado y adaptado.
