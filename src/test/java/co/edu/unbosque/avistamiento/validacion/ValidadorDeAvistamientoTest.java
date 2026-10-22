@@ -193,7 +193,7 @@ class ValidadorDeAvistamientoTest {
         // Assert
         assertEquals(ERROR_FECHA_NULA, error);
     }
-    
+
     @Test
     void lugarVacio_esInvalido() {
         // Arrange
@@ -218,5 +218,18 @@ class ValidadorDeAvistamientoTest {
 
         // Assert
         assertEquals(ERROR_OBSERVADOR, error);
+    }
+
+        @Test
+    void lugarNulo_esInvalido() {
+        // Arrange
+        Avistamiento avistamiento = avistamientoValido();
+        avistamiento.setLugar(null);
+
+        // Act
+        String error = validador.validar(avistamiento);
+
+        // Assert
+        assertEquals(ERROR_LUGAR, error);
     }
 }
