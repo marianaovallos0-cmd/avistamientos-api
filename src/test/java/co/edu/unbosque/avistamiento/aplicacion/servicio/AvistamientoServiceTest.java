@@ -1,4 +1,4 @@
-package co.edu.unbosque.avistamiento.service;
+package co.edu.unbosque.avistamiento.aplicacion.servicio;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,22 +15,23 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import co.edu.unbosque.avistamiento.model.Avistamiento;
-import co.edu.unbosque.avistamiento.repository.AvistamientoRepository;
+import co.edu.unbosque.avistamiento.aplicacion.modelo.Avistamiento;
+import co.edu.unbosque.avistamiento.aplicacion.puerto.salida.RepositorioDeAvistamientos;
 
 class AvistamientoServiceTest {
 
     @Test
     void buscarPorId_cuandoExiste_devuelveElAvistamiento() {
         // Arrange
-        AvistamientoRepository repositorio = mock(AvistamientoRepository.class);
-        AvistamientoService servicio = new AvistamientoService(repositorio);
+        RepositorioDeAvistamientos repositorio = mock(RepositorioDeAvistamientos.class);
+        ValidadorDeAvistamiento validador = mock(ValidadorDeAvistamiento.class);
+        AvistamientoService servicio = new AvistamientoService(repositorio, validador);
 
         Avistamiento colibri = new Avistamiento();
         colibri.setId(1L);
         colibri.setEspecie("Colibrí");
 
-        when(repositorio.findById(1L)).thenReturn(Optional.of(colibri));
+        when(repositorio.buscarPorId(1L)).thenReturn(Optional.of(colibri));
 
         // Act
         Optional<Avistamiento> resultado = servicio.buscarPorId(1L);
@@ -43,10 +44,11 @@ class AvistamientoServiceTest {
     @Test
     void buscarPorId_cuandoNoExiste_devuelveVacio() {
         // Arrange
-        AvistamientoRepository repositorio = mock(AvistamientoRepository.class);
-        AvistamientoService servicio = new AvistamientoService(repositorio);
+        RepositorioDeAvistamientos repositorio = mock(RepositorioDeAvistamientos.class);
+        ValidadorDeAvistamiento validador = mock(ValidadorDeAvistamiento.class);
+        AvistamientoService servicio = new AvistamientoService(repositorio, validador);
 
-        when(repositorio.findById(1L)).thenReturn(Optional.empty());
+        when(repositorio.buscarPorId(1L)).thenReturn(Optional.empty());
 
         // Act
         Optional<Avistamiento> resultado = servicio.buscarPorId(1L);
@@ -58,59 +60,63 @@ class AvistamientoServiceTest {
     @Test
     void eliminar_cuandoExiste_borraYDevuelveTrue() {
         // Arrange
-        AvistamientoRepository repositorio = mock(AvistamientoRepository.class);
-        AvistamientoService servicio = new AvistamientoService(repositorio);
+        RepositorioDeAvistamientos repositorio = mock(RepositorioDeAvistamientos.class);
+        ValidadorDeAvistamiento validador = mock(ValidadorDeAvistamiento.class);
+        AvistamientoService servicio = new AvistamientoService(repositorio, validador);
 
-        when(repositorio.existsById(1L)).thenReturn(true);
+        when(repositorio.existe(1L)).thenReturn(true);
 
         // Act
         boolean resultado = servicio.eliminar(1L);
 
         // Assert
         assertTrue(resultado);
-        verify(repositorio, times(1)).deleteById(1L);
+        verify(repositorio, times(1)).eliminar(1L);
     }
 
     @Test
     void eliminar_cuandoNoExiste_noBorraYDevuelveFalse() {
         // Arrange
-        AvistamientoRepository repositorio = mock(AvistamientoRepository.class);
-        AvistamientoService servicio = new AvistamientoService(repositorio);
+        RepositorioDeAvistamientos repositorio = mock(RepositorioDeAvistamientos.class);
+        ValidadorDeAvistamiento validador = mock(ValidadorDeAvistamiento.class);
+        AvistamientoService servicio = new AvistamientoService(repositorio, validador);
 
-        when(repositorio.existsById(1L)).thenReturn(false);
+        when(repositorio.existe(1L)).thenReturn(false);
 
         // Act
         boolean resultado = servicio.eliminar(1L);
 
         // Assert
         assertFalse(resultado);
-        verify(repositorio, never()).deleteById(anyLong());
+        verify(repositorio, never()).eliminar(anyLong());
     }
 
     @Test
     void agregarAvistamiento_cuandoGuarda_devuelveElAvistamiento() {
         // Arrange
-        AvistamientoRepository repositorio = mock(AvistamientoRepository.class);
-        AvistamientoService servicio = new AvistamientoService(repositorio);
+        RepositorioDeAvistamientos repositorio = mock(RepositorioDeAvistamientos.class);
+        ValidadorDeAvistamiento validador = mock(ValidadorDeAvistamiento.class);
+        AvistamientoService servicio = new AvistamientoService(repositorio, validador);
 
         Avistamiento colibri = new Avistamiento();
         colibri.setEspecie("Colibri");
 
-        when(repositorio.save(colibri)).thenReturn(colibri);
+        when(repositorio.guardar(colibri)).thenReturn(colibri);
 
         // Act
         Avistamiento resultado = servicio.agregarAvistamiento(colibri);
 
         // Assert
         assertEquals("Colibri", resultado.getEspecie());
-        verify(repositorio, times(1)).save(resultado);
+        verify(repositorio, times(1)).guardar(resultado);
     }
 
     @Test
     void actualizarAvistamiento_CuandoNoExiste_devuelveVacio() {
         // Arrange
-        AvistamientoRepository repositorio = mock(AvistamientoRepository.class);
-        AvistamientoService servicio = new AvistamientoService(repositorio);
+        RepositorioDeAvistamientos repositorio = mock(RepositorioDeAvistamientos.class);
+        ValidadorDeAvistamiento validador = mock(ValidadorDeAvistamiento.class);
+        AvistamientoService servicio = new AvistamientoService(repositorio, validador);
 
         Avistamiento colibri = new Avistamiento();
         colibri.setEspecie("Colibri");
@@ -118,13 +124,13 @@ class AvistamientoServiceTest {
         colibri.setLugar("Bogotá");
         colibri.setObservador("Ovallos Mariana");
 
-        when(repositorio.findById(99L)).thenReturn(Optional.empty());
+        when(repositorio.buscarPorId(99L)).thenReturn(Optional.empty());
 
         // Act
         Optional<Avistamiento> resultado = servicio.actualizar(99L, colibri);
 
         // Assert
         assertTrue(resultado.isEmpty());
-        verify(repositorio, never()).save(any());
+        verify(repositorio, never()).guardar(any());
     }
 }

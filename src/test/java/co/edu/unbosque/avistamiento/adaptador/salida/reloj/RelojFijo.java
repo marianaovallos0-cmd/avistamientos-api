@@ -1,6 +1,8 @@
-package co.edu.unbosque.avistamiento.validacion;
+package co.edu.unbosque.avistamiento.adaptador.salida.reloj;
 
 import java.time.LocalDate;
+
+import co.edu.unbosque.avistamiento.aplicacion.puerto.salida.Reloj;
 
 public class RelojFijo implements Reloj {
 

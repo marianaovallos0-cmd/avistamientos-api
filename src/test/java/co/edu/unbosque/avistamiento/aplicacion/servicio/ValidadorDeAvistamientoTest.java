@@ -1,4 +1,4 @@
-package co.edu.unbosque.avistamiento.validacion;
+package co.edu.unbosque.avistamiento.aplicacion.servicio;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -8,7 +8,8 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import co.edu.unbosque.avistamiento.model.Avistamiento;
+import co.edu.unbosque.avistamiento.adaptador.salida.reloj.RelojFijo;
+import co.edu.unbosque.avistamiento.aplicacion.modelo.Avistamiento;
 
 class ValidadorDeAvistamientoTest {
 

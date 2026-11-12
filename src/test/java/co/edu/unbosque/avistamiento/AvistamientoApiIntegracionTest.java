@@ -11,8 +11,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.client.RestTestClient;
 
-import co.edu.unbosque.avistamiento.model.Avistamiento;
-import co.edu.unbosque.avistamiento.repository.AvistamientoRepository;
+import co.edu.unbosque.avistamiento.adaptador.salida.persistencia.AvistamientoEntidad;
+import co.edu.unbosque.avistamiento.adaptador.salida.persistencia.AvistamientoJpaRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AvistamientoApiIntegracionTest {
@@ -21,7 +21,7 @@ class AvistamientoApiIntegracionTest {
     private int puerto;
 
     @Autowired
-    private AvistamientoRepository repositorio;
+    private AvistamientoJpaRepository repositorio;
 
     private RestTestClient cliente;
 
@@ -35,8 +35,8 @@ class AvistamientoApiIntegracionTest {
         cliente = RestTestClient.bindToServer().baseUrl("http://localhost:" + puerto).build();
     }
 
-    private Avistamiento guardar(String especie, String lugar) {
-        Avistamiento a = new Avistamiento();
+    private AvistamientoEntidad guardar(String especie, String lugar) {
+        AvistamientoEntidad a = new AvistamientoEntidad();
         a.setEspecie(especie);
         a.setLugar(lugar);
         a.setFecha("2026-10-01");
@@ -108,7 +108,7 @@ class AvistamientoApiIntegracionTest {
     @Test
     void getPorId_existente_responde200ConSusDatos() {
         // Arrange
-        Avistamiento guardado = guardar("Colibrí", "Monserrate");
+        AvistamientoEntidad guardado = guardar("Colibrí", "Monserrate");
 
         // Act
         cliente.get().uri("/avistamientos/{id}", guardado.getId())
@@ -133,7 +133,7 @@ class AvistamientoApiIntegracionTest {
     @Test
     void put_existenteConDatosValidos_responde200YCambiaEnLaBase() {
         // Arrange
-        Avistamiento guardado = guardar("Colibrí", "Jardín Botánico");
+        AvistamientoEntidad guardado = guardar("Colibrí", "Jardín Botánico");
         String json = """
                 {"especie":"Colibrí verde","lugar":"Monserrate","fecha":"2026-10-02","observador":"Mariana Ovallos"}
                 """;
@@ -149,7 +149,7 @@ class AvistamientoApiIntegracionTest {
                 .jsonPath("$.especie").isEqualTo("Colibrí verde")
                 .jsonPath("$.lugar").isEqualTo("Monserrate");
 
-        Avistamiento enLaBase = repositorio.findById(guardado.getId()).orElseThrow();
+        AvistamientoEntidad enLaBase = repositorio.findById(guardado.getId()).orElseThrow();
         assertEquals("Colibrí verde", enLaBase.getEspecie());
         assertEquals("Monserrate", enLaBase.getLugar());
         assertEquals("2026-10-02", enLaBase.getFecha());
@@ -158,7 +158,7 @@ class AvistamientoApiIntegracionTest {
     @Test
     void put_conFechaFutura_responde400YNoCambiaLaBase() {
         // Arrange
-        Avistamiento guardado = guardar("Colibrí", "Jardín Botánico");
+        AvistamientoEntidad guardado = guardar("Colibrí", "Jardín Botánico");
         String json = """
                 {"especie":"Colibrí","lugar":"Jardín Botánico","fecha":"2999-01-01","observador":"Mariana Ovallos"}
                 """;
@@ -192,7 +192,7 @@ class AvistamientoApiIntegracionTest {
     @Test
     void delete_existente_responde204YLuegoGetResponde404() {
         // Arrange
-        Avistamiento guardado = guardar("Colibrí", "Jardín Botánico");
+        AvistamientoEntidad guardado = guardar("Colibrí", "Jardín Botánico");
 
         // Act
         cliente.delete().uri("/avistamientos/{id}", guardado.getId())
