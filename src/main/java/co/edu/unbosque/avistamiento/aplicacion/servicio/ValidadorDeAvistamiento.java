@@ -1,13 +1,11 @@
-package co.edu.unbosque.avistamiento.validacion;
+package co.edu.unbosque.avistamiento.aplicacion.servicio;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-import org.springframework.stereotype.Component;
+import co.edu.unbosque.avistamiento.aplicacion.modelo.Avistamiento;
+import co.edu.unbosque.avistamiento.aplicacion.puerto.salida.Reloj;
 
-import co.edu.unbosque.avistamiento.model.Avistamiento;
-
-@Component
 public class ValidadorDeAvistamiento {
 
     private final Reloj reloj;
